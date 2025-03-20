@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Info.css";
 
-function Info() {
+function Info({ selectedDay }) {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,12 +27,24 @@ function Info() {
   if (loading) return <p>Chargement...</p>;
   if (error) return <p>Erreur : {error}</p>;
 
+
+  if (!weather) return <p>Chargement...</p>;
+
+
+  const getDayOfWeek = (dateStr) => {
+    const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const date = new Date(dateStr + "T00:00:00");
+    return days[date.getDay()];
+  };
+
+  const selectedWeather = weather.forecast.forecastday[selectedDay];
+
   return (
     <>
-      <span className="card-title">Température à {weather.location.name}</span>
-      <p><img src={`https:${weather.current.condition.icon}`} alt="Icône météo" /></p>
-      <span className="temperature">{weather.current.temp_c}°C</span>
-      <div className="wind">Vent {weather.current.wind_kph} km/h ({weather.current.wind_degree}°)</div>
+      <span className="card-title">Météo du {getDayOfWeek(selectedWeather.date)}</span>
+      <p><img src={`https:${selectedWeather.day.condition.icon}`} alt="Icône météo" /></p>
+      <span className="temperature">{selectedWeather.day.avgtemp_c}°C</span>
+      <div className="wind">Vent {selectedWeather.day.maxwind_kph} km/h</div>
     </>
   );
 }
